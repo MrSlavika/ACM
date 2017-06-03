@@ -1,0 +1,78 @@
+#define _CRT_SECURE_NO_WARNINGS
+#define LL long long
+#define MEM(a,b) memset(a,b,sizeof(a))
+#define FOR(i,a,b) for(int i=a;i<=b;i++)
+#define BUG cout<<"here"<<endl
+#define SCF(a) scanf("%d",&a)
+#define SCF2(a,b) scanf("%d%d",&a,&b)
+#define INF 0x3f3f3f3f
+#define MAXM 100000
+#define MAXN 10005
+
+#include <iostream>
+#include <cstdio>
+#include <cstring>
+#include <cmath>
+#include <climits>
+#include <algorithm>
+
+using namespace std;
+
+LL dp[25][3];
+//LL dp2[25][3];
+int num[25];
+LL ans;
+LL n;
+//0-
+//1-9
+//2-49
+
+void init() {
+	dp[0][0] = 1;
+	dp[0][1] = dp[0][2] = 0;
+	FOR(i, 1, 20) {
+		dp[i][2] = dp[i - 1][2] * 10 + dp[i - 1][1];
+		dp[i][1] = dp[i - 1][0];
+		dp[i][0] = dp[i - 1][0]*10 - dp[i - 1][1];
+		//cout << dp[i][0] << " " << dp[i][1] << " " << dp[i][2] << endl;
+		//BUG;
+	}
+}
+
+void solve(LL x) {
+	++x;
+	MEM(num, -1);
+	ans = 0;
+	int cnt = 0;
+	while (x>0) {
+		num[++cnt] = x % 10;
+		x /= 10;
+	}
+	bool flag = false;
+	for (int i = cnt; i >= 1; i--) {
+		ans += num[i] * dp[i - 1][2];
+		if (flag) {
+			ans += dp[i - 1][0]*num[i];
+		}
+		else {
+			if (num[i] > 4) {
+				ans += dp[i - 1][1];
+			}
+		}
+		if (num[i + 1] == 4 && num[i] == 9) {
+			flag = true;
+		}
+	}
+}
+
+int main() {
+	int T;
+	SCF(T);
+	init();
+	while (T--) {
+		scanf("%lld", &n);
+		solve(n);
+		printf("%lld\n", ans);
+	}
+	return 0;
+}
