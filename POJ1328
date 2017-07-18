@@ -1,0 +1,80 @@
+#define _CRT_SECURE_NO_WARNINGS
+#define SCF(a,b) scanf("%d%d",&a,&b)
+#define FOR(i,a,b) for(int i=a;i<=b;i++)
+#define MAXN 1005
+
+#include <iostream>
+#include <cstdio>
+#include <cstring>
+#include <cmath>
+#include <queue>
+
+using namespace std;
+
+int n, r;
+int res;
+
+struct Point
+{
+	int x, y;
+	double c;
+}q[MAXN];
+
+
+bool operator <(const Point &a, const Point &b) {
+	return a.c>b.c;
+}
+
+priority_queue <Point> qu;
+
+double calDis(int x1, int y1, double x2, int y2) {
+	return (x1 - x2)*(x1 - x2) + (y1 - y2)*(y1 - y2);
+}
+
+void solve() {
+	res = 0;
+	if (n == 0)return;
+	Point c = qu.top();
+	qu.pop();
+	res++;
+	double cc = c.c;
+	while (!qu.empty()) {
+		c = qu.top();
+		qu.pop();
+		if (calDis(c.x, c.y, cc, 0)>(r*r)) {
+			res++;
+			cc=c.c;
+		}
+	}
+}
+
+int main() {
+	freopen("in.txt","r",stdin);
+	int T=0;
+	while (1) {
+		SCF(n, r);
+		if (n == 0 && r == 0)break;
+		int x, y;
+		bool hvSol = true;
+		if (r == 0) { hvSol = false; }
+		FOR(i, 1, n) {
+			SCF(x, y);
+			if (y > r) hvSol = false;
+			if (hvSol) {
+				q[i].x = x;
+				q[i].y = y;
+				q[i].c=q[i].x + sqrt(double(r*r - q[i].y*q[i].y));
+				qu.push(q[i]);
+			}
+		}
+		printf("Case %d: ",++T);
+		if (hvSol) {
+			solve();
+			printf("%d\n", res);
+		}
+		else {
+			printf("-1\n");
+		}
+	}
+	return 0;
+}
